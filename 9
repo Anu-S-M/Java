@@ -1,0 +1,65 @@
+package conversion;
+
+import conversion.Class2;
+import conversion.Class3;
+
+public class ninth {
+    public static void main(String[] args) {
+        In1 t = new Class2();
+        t.method();
+
+        In1 a = new Class3();
+        a.method();
+    }
+}
+
+
+
+
+
+
+//In1.java
+package conversion;
+
+public interface In1 {
+    void method();
+}
+
+
+//class2.java
+package conversion;
+
+import java.util.Scanner;
+
+public class Class2 implements In1 {
+    Scanner anu = new Scanner(System.in);
+
+    public void method() {
+        int a;
+        System.out.println("Enter the byte value");
+        a = anu.nextInt();
+        float kilobytes = (float) (a * 0.001);
+        System.out.println(a + " bytes = " + kilobytes + " kilobytes");
+    }
+}
+
+
+
+
+
+//class3.java
+package conversion;
+
+import java.util.Scanner;
+
+public class Class3 implements In1 {
+    Scanner anu = new Scanner(System.in);
+
+    public void method() {
+        int euro;
+        System.out.println("Enter the euro value");
+        euro = anu.nextInt();
+        float rupees = euro * 90;
+        System.out.println(euro + " euros = " + rupees + " rupees");
+    }
+}
