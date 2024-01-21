@@ -1,0 +1,107 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class App {
+
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/student_details";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "root";
+
+    public static void main(String[] args) {
+        try {
+            // Establishing the database connection
+            Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
+
+            // Displaying student details
+            displayStudentDetails(connection);
+
+            // Creating a new student record
+            createStudent(connection);
+
+            // Displaying student details after creation
+            displayStudentDetails(connection);
+
+            // Updating a student record
+            updateStudent(connection);
+
+            // Displaying student details after update
+            displayStudentDetails(connection);
+
+            // Deleting a student record
+            deleteStudent(connection);
+
+            // Displaying student details after deletion
+            displayStudentDetails(connection);
+
+            // Closing resources
+            connection.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void displayStudentDetails(Connection connection) throws SQLException {
+        String query = "SELECT * FROM students";
+        try (PreparedStatement ps = connection.prepareStatement(query);
+             ResultSet resultSet = ps.executeQuery()) {
+
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                String usn = resultSet.getString("usn");
+                int semester = resultSet.getInt("semester");
+                int age = resultSet.getInt("age");
+                String course = resultSet.getString("course");
+                String dob = resultSet.getString("dob");
+                String address = resultSet.getString("address");
+
+                System.out.println("Name: " + name + ", USN: " + usn + ", Semester: " + semester +
+                        ", Age: " + age + ", Course: " + course + ", DOB: " + dob + ", Address: " + address);
+            }
+        }
+    }
+
+    private static void createStudent(Connection connection) throws SQLException {
+        String insertQuery = "INSERT INTO students (name, usn, semester, age, course, dob, address) " +
+                             "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(insertQuery)) {
+            ps.setString(1, "New Student");
+            ps.setString(2, "NS123");
+            ps.setInt(3, 1);
+            ps.setInt(4, 20);
+            ps.setString(5, "Computer Science");
+            ps.setString(6, "2004-01-01");
+            ps.setString(7, "New Address");
+
+            int rowsAffected = ps.executeUpdate();
+            System.out.println(rowsAffected + " row(s) inserted");
+        }
+    }
+
+    private static void updateStudent(Connection connection) throws SQLException {
+        String updateQuery = "UPDATE students SET address = ? WHERE usn = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(updateQuery)) {
+            ps.setString(1, "Updated Address");
+            ps.setString(2, "NS123");
+
+            int rowsAffected = ps.executeUpdate();
+            System.out.println(rowsAffected + " row(s) updated");
+        }
+    }
+
+    private static void deleteStudent(Connection connection) throws SQLException {
+        String deleteQuery = "DELETE FROM students WHERE usn = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(deleteQuery)) {
+            ps.setString(1, "NS123");
+
+            int rowsAffected = ps.executeUpdate();
+            System.out.println(rowsAffected + " row(s) deleted");
+        }
+    }
+}
